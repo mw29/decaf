@@ -1,4 +1,4 @@
-import 'package:beaverlog_flutter/beaverlog_flutter.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 
 enum AnalyticsEvent {
   addCaffeineEntry,
@@ -33,9 +33,9 @@ enum AnalyticsEvent {
 
 class Analytics {
   static void track(AnalyticsEvent event, [Map<String, Object>? metadata]) {
-    BeaverLog().event(
+    Posthog().capture(
       eventName: event.name,
-      meta: metadata,
+      properties: metadata,
     );
   }
 }

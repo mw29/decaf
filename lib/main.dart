@@ -1,8 +1,6 @@
-import 'package:beaverlog_flutter/beaverlog_flutter.dart';
 import 'package:decaf/constants/colors.dart';
 import 'package:decaf/pages/home.dart';
 import 'package:decaf/pages/plan_page.dart';
-import 'package:decaf/secrets/secrets.dart';
 import 'package:decaf/widgets/add_caffeine_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,12 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final pageIndexProvider = StateProvider<int>((ref) => 0);
 
 void main() async {
-  BeaverLog().init(
-    appId: beaverlogAppId,
-    publicKey: beaverlogPublicKey,
-    host: 'https://beaverlog.deno.dev',
-  );
-  runApp(const ProviderScope(child: MyApp()));
+    runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

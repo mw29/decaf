@@ -1,6 +1,6 @@
 name: decaf
 description: "Quit caffeine fast."
-publish_to: 'none'
+publish_to: "none"
 version: 2025.09.04+17
 
 environment:
@@ -19,10 +19,7 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   in_app_review: ^2.0.10
   url_launcher: ^6.3.2
-  beaverlog_flutter:
-    git: 
-      url: git@github.com:drg101/beaverlog_flutter.git
-      ref: 00bb47524f4d2a6852cd1ef6fb2da01decaa6444
+  posthog_flutter: ^5.0.0
 
 dev_dependencies:
   flutter_test:
