@@ -1,4 +1,3 @@
-import 'package:posthog_flutter/posthog_flutter.dart';
 
 enum AnalyticsEvent {
   addMedicationEntry,
@@ -33,9 +32,6 @@ enum AnalyticsEvent {
 
 class Analytics {
   static void track(AnalyticsEvent event, [Map<String, Object>? metadata]) {
-    Posthog().capture(
-      eventName: event.name,
-      properties: metadata,
-    );
+    
   }
 }
