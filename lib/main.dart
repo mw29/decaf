@@ -29,28 +29,39 @@ class MyApp extends StatelessWidget {
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.medication,
-        brightness: Brightness.light,
+        brightness: Brightness.dark,
         surface: AppColors.surface,
+      ).copyWith(
+        surface: AppColors.surface,
+        onSurface: Colors.white,
+        primary: AppColors.medication,
+        onPrimary: AppColors.background,
+        secondary: AppColors.medication,
       ),
       useMaterial3: true,
-      scaffoldBackgroundColor: AppColors.surface,
+      scaffoldBackgroundColor: AppColors.background,
     );
     return MaterialApp(
       title: 'TaperMind',
       theme: base.copyWith(
-        textTheme: GoogleFonts.nunitoTextTheme(base.textTheme),
+        textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
         cardTheme: base.cardTheme.copyWith(
-          color: Colors.white,
+          color: AppColors.surfaceCard,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
+            side: BorderSide(
+              color: Colors.white.withValues(alpha: 0.07),
+            ),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.medication,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.background,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),
@@ -60,17 +71,28 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.medication,
+          ),
+        ),
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.15)),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: AppColors.medication, width: 2),
           ),
           filled: true,
-          fillColor: Colors.white,
+          fillColor: AppColors.surfaceCard,
+          labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
         ),
         sliderTheme: SliderThemeData(
           activeTrackColor: AppColors.medication,
@@ -79,25 +101,48 @@ class MyApp extends StatelessWidget {
           overlayColor: AppColors.medication.withValues(alpha: 0.1),
         ),
         chipTheme: ChipThemeData(
+          backgroundColor: AppColors.surfaceCard,
           selectedColor: AppColors.medication,
-          labelStyle: GoogleFonts.nunito(fontSize: 14),
+          labelStyle: GoogleFonts.nunito(fontSize: 14, color: Colors.white),
+          secondaryLabelStyle: GoogleFonts.nunito(
+            fontSize: 14,
+            color: AppColors.background,
+            fontWeight: FontWeight.w600,
+          ),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
         ),
         appBarTheme: AppBarTheme(
-          backgroundColor: AppColors.surface,
+          backgroundColor: AppColors.background,
           elevation: 0,
           scrolledUnderElevation: 0,
           titleTextStyle: GoogleFonts.nunito(
-            color: Colors.black87,
+            color: Colors.white,
             fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
-          iconTheme: const IconThemeData(color: Colors.black87),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
+        bottomNavigationBarTheme: BottomNavigationBarThemeData(
+          backgroundColor: AppColors.surface,
+          selectedItemColor: AppColors.medication,
+          unselectedItemColor: Colors.white.withValues(alpha: 0.4),
+        ),
+        bottomAppBarTheme: const BottomAppBarThemeData(
+          color: AppColors.surface,
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: AppColors.surfaceCard,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        dividerColor: Colors.white.withValues(alpha: 0.08),
+        iconTheme: IconThemeData(color: Colors.white.withValues(alpha: 0.7)),
       ),
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: const AppRoot(),
       debugShowCheckedModeBanner: false,
     );

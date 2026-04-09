@@ -1,22 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <rect width="1024" height="1024" fill="#6C63FF"/>
+  <rect width="1024" height="1024" fill="#1A1A2E"/>
 
   <!-- 4 vertical capsule pills, bottom-aligned at y=720 -->
   <!-- Each pill: white capsule shape + a horizontal seam line at midpoint -->
 
   <!-- Pill 1: w=110 h=400, top=320, seam at y=520 -->
-  <rect x="202" y="320" width="110" height="400" rx="55" fill="white"/>
-  <rect x="202" y="514" width="110" height="12" fill="#6C63FF" opacity="1"/>
+  <rect x="202" y="320" width="110" height="400" rx="55" fill="#B298F8"/>
+  <rect x="202" y="514" width="110" height="12" fill="#1A1A2E" opacity="1"/>
 
   <!-- Pill 2: w=110 h=300, top=420, seam at y=570 -->
-  <rect x="372" y="420" width="110" height="300" rx="55" fill="white"/>
-  <rect x="372" y="564" width="110" height="12" fill="#6C63FF" opacity="1"/>
+  <rect x="372" y="420" width="110" height="300" rx="55" fill="#B298F8"/>
+  <rect x="372" y="564" width="110" height="12" fill="#1A1A2E" opacity="1"/>
 
   <!-- Pill 3: w=110 h=200, top=520, seam at y=614 -->
-  <rect x="542" y="520" width="110" height="200" rx="55" fill="white"/>
-  <rect x="542" y="614" width="110" height="12" fill="#6C63FF" opacity="1"/>
+  <rect x="542" y="520" width="110" height="200" rx="55" fill="#B298F8"/>
+  <rect x="542" y="614" width="110" height="12" fill="#1A1A2E" opacity="1"/>
 
   <!-- Pill 4: w=110 h=110, top=610, seam at y=659 -->
-  <rect x="712" y="610" width="110" height="110" rx="55" fill="white"/>
-  <rect x="712" y="659" width="110" height="12" fill="#6C63FF" opacity="1"/>
+  <rect x="712" y="610" width="110" height="110" rx="55" fill="#B298F8"/>
+  <rect x="712" y="659" width="110" height="12" fill="#1A1A2E" opacity="1"/>
 </svg>

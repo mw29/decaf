@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary brand — a warm violet-indigo
-  static const Color medication = Color(0xFF6C63FF);
+  // Primary brand — electric lavender
+  static const Color medication = Color(0xFFB298F8);
 
-  // Accent — a soft coral for positive energy
-  static const Color accent = Color(0xFFFF6B6B);
+  // Accent
+  static const Color accent = Color(0xFFB298F8);
 
   // Semantic
-  static const Color positiveEffect = Color(0xFF06D6A0); // mint green
-  static const Color negativeEffect = Color(0xFFFF6B6B); // coral
+  static const Color positiveEffect = Color(0xFF5EEAD4); // teal
+  static const Color negativeEffect = Color(0xFFFF7B7B); // soft red
 
-  // Light tints
-  static const Color positiveEffectLight = Color(0xFFE6FBF5);
-  static const Color negativeEffectLight = Color(0xFFFFEEEE);
+  // Dark tints for symptom cards
+  static const Color positiveEffectLight = Color(0xFF1A2E2B);
+  static const Color negativeEffectLight = Color(0xFF2E1A1A);
 
-  // Surface / background
-  static const Color surface = Color(0xFFF7F6FF); // very light lavender
+  // Surfaces
+  static const Color background = Color(0xFF0F0F1A); // deep navy-black
+  static const Color surface = Color(0xFF1A1A2E);    // slightly lighter navy
+  static const Color surfaceCard = Color(0xFF22223A); // card surface
 }
