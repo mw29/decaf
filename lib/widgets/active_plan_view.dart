@@ -1,11 +1,12 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/taper_plan_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/utils/taper_calculator.dart';
-import 'package:decaf/widgets/calendar_view.dart';
-import 'package:decaf/widgets/taper_progress_chart.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/taper_plan_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/utils/format_utils.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
+import 'package:tapermind/widgets/calendar_view.dart';
+import 'package:tapermind/widgets/taper_progress_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -174,7 +175,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
               LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Colors.grey.withValues(alpha: 0.3),
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.caffeine),
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.medication),
               ),
               const SizedBox(height: 12),
               Row(
@@ -224,7 +225,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
                 Expanded(
                   child: _buildTodayMetric(
                     'Target',
-                    '${target.toStringAsFixed(0)}mg',
+                    formatMg(target),
                     Colors.grey[600]!,
                   ),
                 ),
@@ -236,7 +237,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
                 Expanded(
                   child: _buildTodayMetric(
                     'Actual',
-                    '${actual.toStringAsFixed(0)}mg',
+                    formatMg(actual),
                     isOnTrack ? Colors.green : Colors.orange,
                   ),
                 ),
@@ -248,7 +249,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
                 Expanded(
                   child: _buildTodayMetric(
                     'Difference',
-                    '${(actual - target).toStringAsFixed(0)}mg',
+                    formatMg(actual - target),
                     actual <= target ? Colors.green : Colors.red,
                   ),
                 ),
@@ -296,7 +297,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
             ),
             const SizedBox(height: 16),
             _buildDetailRow('Method', widget.plan.preset.displayName),
-            _buildDetailRow('Starting Amount', '${widget.plan.startingAmount.toStringAsFixed(0)}mg'),
+            _buildDetailRow('Starting Amount', formatMg(widget.plan.startingAmount)),
             _buildDetailRow('Target Amount', '0mg'),
             _buildDetailRow('Start Date', _formatDate(widget.plan.startDate)),
             _buildDetailRow('End Date', _formatDate(widget.plan.endDate)),
@@ -403,7 +404,7 @@ class _ActivePlanViewState extends ConsumerState<ActivePlanView>
 
   double _getActualCaffeineForDay(List<Event> events, DateTime date) {
     final dayEvents = events.where((event) {
-      if (event.type != EventType.caffeine) return false;
+      if (event.type != EventType.medication) return false;
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       return eventDate.year == date.year &&
              eventDate.month == date.month &&

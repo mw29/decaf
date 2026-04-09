@@ -1,7 +1,7 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/providers/symptoms_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/widgets/add_or_edit_symptom_dialog.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/widgets/add_or_edit_symptom_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

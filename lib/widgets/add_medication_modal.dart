@@ -1,26 +1,27 @@
-import 'package:decaf/pages/manage_caffeine_options.dart';
-import 'package:decaf/providers/caffeine_options_provider.dart';
-import 'package:decaf/providers/date_provider.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/settings_provider.dart';
-import 'package:decaf/utils/analytics.dart';
+import 'package:tapermind/pages/manage_medication_options.dart';
+import 'package:tapermind/providers/caffeine_options_provider.dart';
+import 'package:tapermind/providers/date_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/settings_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddCaffeineModal extends ConsumerStatefulWidget {
-  const AddCaffeineModal({super.key});
+class AddMedicationModal extends ConsumerStatefulWidget {
+  const AddMedicationModal({super.key});
 
   @override
-  ConsumerState<AddCaffeineModal> createState() => _AddCaffeineModalState();
+  ConsumerState<AddMedicationModal> createState() => _AddMedicationModalState();
 }
 
-class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
-  double _caffeineAmount = 0;
+class _AddMedicationModalState extends ConsumerState<AddMedicationModal> {
+  double _doseAmount = 0;
   String? _selectedChipKey;
 
   @override
   Widget build(BuildContext context) {
-    final caffeineOptions = ref.watch(caffeineOptionsProvider);
+    final medicationOptions = ref.watch(medicationOptionsProvider);
 
     return SafeArea(
       child: Padding(
@@ -39,7 +40,7 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Add Caffeine',
+                    'Add Medication',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 24),
@@ -50,7 +51,7 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                         icon: const Icon(Icons.remove),
                         onPressed: () {
                           setState(() {
-                            _caffeineAmount = (_caffeineAmount - 5).clamp(
+                            _doseAmount = (_doseAmount - 5).clamp(
                               0,
                               double.infinity,
                             );
@@ -58,7 +59,7 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                         },
                       ),
                       Text(
-                        '${_caffeineAmount.toStringAsFixed(0)} mg',
+                        formatMg(_doseAmount),
                         style: Theme.of(context).textTheme.headlineLarge
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -66,7 +67,7 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                         icon: const Icon(Icons.add),
                         onPressed: () {
                           setState(() {
-                            _caffeineAmount = _caffeineAmount + 5;
+                            _doseAmount = _doseAmount + 5;
                           });
                         },
                       ),
@@ -77,7 +78,7 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                     child: Wrap(
                       spacing: 8.0,
                       children: [
-                        ...caffeineOptions.when(
+                        ...medicationOptions.when(
                           data: (options) {
                             return options.where((option) => option.enabled).map((
                               option,
@@ -85,17 +86,17 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                               final name = '${option.emoji} ${option.name}';
                               return ChoiceChip(
                                 label: Text(
-                                  '$name (${option.caffeineAmount.toStringAsFixed(0)}mg)',
+                                  '$name (${formatMg(option.doseAmount)})',
                                 ),
                                 selected: _selectedChipKey == name,
                                 onSelected: (selected) {
                                   setState(() {
                                     if (selected) {
                                       _selectedChipKey = name;
-                                      _caffeineAmount = option.caffeineAmount;
+                                      _doseAmount = option.doseAmount;
                                     } else {
                                       _selectedChipKey = null;
-                                      _caffeineAmount = 0;
+                                      _doseAmount = 0;
                                     }
                                   });
                                 },
@@ -106,14 +107,14 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                           error: (error, stackTrace) => [Text('Error: $error')],
                         ),
                         ChoiceChip(
-                          label: Text('⚙️ Update Options'),
+                          label: const Text('⚙️ Update Options'),
                           selected: false,
                           onSelected: (selected) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder:
                                     (context) =>
-                                        const ManageCaffeineOptionsPage(),
+                                        const ManageMedicationOptionsPage(),
                               ),
                             );
                           },
@@ -126,12 +127,12 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     child: ElevatedButton(
                       onPressed:
-                          _caffeineAmount > 0
+                          _doseAmount > 0
                               ? () async {
                                 Analytics.track(
-                                  AnalyticsEvent.addCaffeineEntry,
+                                  AnalyticsEvent.addMedicationEntry,
                                   {
-                                    'amount': _caffeineAmount,
+                                    'amount': _doseAmount,
                                     'source': _selectedChipKey ?? 'Custom',
                                     'is_custom': _selectedChipKey == null,
                                   },
@@ -148,20 +149,20 @@ class _AddCaffeineModalState extends ConsumerState<AddCaffeineModal> {
                                   now.minute,
                                   now.second,
                                 );
-                                
+
                                 // Record first app usage
                                 await ref.read(settingsProvider.notifier).recordFirstAppUsage();
-                                
+
                                 // Add the event
                                 await ref
                                     .read(eventsProvider.notifier)
                                     .addEvent(
-                                      EventType.caffeine,
-                                      _selectedChipKey ?? 'Custom Caffeine',
-                                      _caffeineAmount,
+                                      EventType.medication,
+                                      _selectedChipKey ?? 'Custom Medication',
+                                      _doseAmount,
                                       timestamp,
                                     );
-                                
+
                                 Navigator.pop(context);
                               }
                               : null,

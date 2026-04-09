@@ -1,7 +1,8 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/utils/taper_calculator.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/utils/format_utils.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -192,7 +193,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
             if (isPlanActive && targetAmount > 0) ...[
               const SizedBox(height: 2),
               Text(
-                '${targetAmount.toStringAsFixed(0)}mg',
+                formatMg(targetAmount),
                 style: TextStyle(
                   fontSize: 10,
                   color: isCurrentMonth 
@@ -234,7 +235,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Target amounts shown below dates • Dots indicate logged caffeine',
+            'Target amounts shown below dates • Dots indicate logged doses',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Colors.grey[600],
             ),
@@ -280,7 +281,7 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
 
   double _getActualCaffeineForDay(List<Event> events, DateTime date) {
     final dayEvents = events.where((event) {
-      if (event.type != EventType.caffeine) return false;
+      if (event.type != EventType.medication) return false;
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       return _isSameDay(eventDate, date);
     });
@@ -305,8 +306,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   }
 
   Color _getDayBackgroundColor(AdherenceStatus status, bool isSelected, bool isToday) {
-    if (isSelected) return AppColors.caffeine;
-    if (isToday) return AppColors.caffeine.withValues(alpha: 0.7);
+    if (isSelected) return AppColors.medication;
+    if (isToday) return AppColors.medication.withValues(alpha: 0.7);
     
     switch (status) {
       case AdherenceStatus.onTrack:
@@ -322,8 +323,8 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
   }
 
   Border? _getDayBorder(bool isSelected, bool isToday) {
-    if (isSelected) return Border.all(color: AppColors.caffeine, width: 2);
-    if (isToday) return Border.all(color: AppColors.caffeine.withValues(alpha: 0.7), width: 2);
+    if (isSelected) return Border.all(color: AppColors.medication, width: 2);
+    if (isToday) return Border.all(color: AppColors.medication.withValues(alpha: 0.7), width: 2);
     return null;
   }
 

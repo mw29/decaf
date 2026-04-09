@@ -1,8 +1,8 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/providers/chart_visibility_provider.dart';
-import 'package:decaf/providers/taper_plan_provider.dart';
-import 'package:decaf/utils/symptom_calculator.dart';
-import 'package:decaf/utils/taper_calculator.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/providers/chart_visibility_provider.dart';
+import 'package:tapermind/providers/taper_plan_provider.dart';
+import 'package:tapermind/utils/symptom_calculator.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,8 +12,8 @@ import '../providers/date_provider.dart';
 import '../providers/events_provider.dart';
 import '../providers/symptoms_provider.dart';
 
-class DailyCaffeineChart extends ConsumerWidget {
-  const DailyCaffeineChart({super.key});
+class DailyMedicationChart extends ConsumerWidget {
+  const DailyMedicationChart({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +28,7 @@ class DailyCaffeineChart extends ConsumerWidget {
         data: (symptoms) => taperPlanAsync.when(
           data: (taperPlan) {
               final caffeineEvents =
-                  events.where((e) => e.type == EventType.caffeine).toList();
+                  events.where((e) => e.type == EventType.medication).toList();
               final symptomEvents =
                   events.where((e) => e.type == EventType.symptom && e.value > 0).toList();
 
@@ -53,7 +53,7 @@ class DailyCaffeineChart extends ConsumerWidget {
                 return const SizedBox(
                   height: 150,
                   child: Center(
-                    child: Text("Log your first coffee or symptom to see the chart."),
+                    child: Text("Log your first dose or symptom to see the chart."),
                   ),
                 );
               }
@@ -134,7 +134,7 @@ class DailyCaffeineChart extends ConsumerWidget {
 
               // Calculate dynamic bar width based on visible series
               int visibleSeriesCount = 0;
-              if (visibility.showCaffeine) visibleSeriesCount++;
+              if (visibility.showMedication) visibleSeriesCount++;
               if (visibility.showPositives) visibleSeriesCount++;
               if (visibility.showNegatives) visibleSeriesCount++;
               
@@ -181,7 +181,7 @@ class DailyCaffeineChart extends ConsumerWidget {
                     barsSpace: 2,
                     x: i,
                     barRods: [
-                      if (visibility.showCaffeine)
+                      if (visibility.showMedication)
                         BarChartRodData(
                           toY: normalizedCaffeine,
                           color: baseColor,
@@ -192,7 +192,7 @@ class DailyCaffeineChart extends ConsumerWidget {
                           backDrawRodData: normalizedTaperTarget > 0 ? BackgroundBarChartRodData(
                             show: true,
                             toY: normalizedTaperTarget,
-                            color: AppColors.caffeine.withValues(alpha: 0.2),
+                            color: AppColors.medication.withValues(alpha: 0.2),
                           ) : null,
                         ),
                       if (visibility.showPositives && normalizedPositiveScore > 0)

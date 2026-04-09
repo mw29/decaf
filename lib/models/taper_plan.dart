@@ -1,4 +1,4 @@
-import 'package:decaf/models/taper_preset.dart';
+import 'package:tapermind/models/taper_preset.dart';
 
 class TaperPlan {
   final String id;

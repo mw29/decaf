@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Rounded square background -->
+  <rect width="1024" height="1024" rx="224" ry="224" fill="#6C63FF"/>
+
+  <!-- Descending staircase (tapering steps), centered, white -->
+  <!-- Step 1 (top-left, tallest) -->
+  <rect x="172" y="272" width="160" height="480" rx="20" ry="20" fill="white" opacity="1"/>
+  <!-- Step 2 -->
+  <rect x="372" y="392" width="160" height="360" rx="20" ry="20" fill="white" opacity="0.85"/>
+  <!-- Step 3 -->
+  <rect x="572" y="512" width="160" height="240" rx="20" ry="20" fill="white" opacity="0.7"/>
+  <!-- Step 4 (shortest) -->
+  <rect x="772" y="632" width="80" height="120" rx="20" ry="20" fill="white" opacity="0.55"/>
+
+  <!-- Baseline -->
+  <rect x="148" y="772" width="728" height="28" rx="14" ry="14" fill="white" opacity="0.4"/>
+</svg>

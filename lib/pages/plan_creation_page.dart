@@ -1,12 +1,12 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/models/taper_preset.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/taper_plan_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/utils/taper_calculator.dart';
-import 'package:decaf/widgets/preset_selector.dart';
-import 'package:decaf/widgets/custom_taper_editor.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/models/taper_preset.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/taper_plan_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
+import 'package:tapermind/widgets/preset_selector.dart';
+import 'package:tapermind/widgets/custom_taper_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +27,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
   DateTime _startDate = DateTime.now();
   int _durationWeeks = 4;
   double? _startingAmount;
-  double _stepDownAmount = 50.0;
+  double _stepDownAmount = 0; // derived from starting amount once loaded
   int _stepDownIntervalDays = 7;
   Map<int, double> _customTargets = {};
   bool _isLoading = false;
@@ -41,12 +41,24 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
   void _calculateStartingAmount() {
     final eventsAsync = ref.read(eventsProvider);
     eventsAsync.whenData((events) {
-      final caffeineEvents = events.where((e) => e.type == EventType.caffeine).toList();
-      final calculated = TaperCalculator.calculateCurrentIntake(caffeineEvents);
+      final medicationEvents = events.where((e) => e.type == EventType.medication).toList();
+      final calculated = TaperCalculator.calculateCurrentIntake(medicationEvents);
       setState(() {
         _startingAmount = calculated;
+        // Default step = 10% of starting dose, rounded to a sensible value
+        if (_stepDownAmount == 0 && calculated > 0) {
+          _stepDownAmount = _sensibleStepDefault(calculated);
+        }
       });
     });
+  }
+
+  double _sensibleStepDefault(double amount) {
+    final raw = amount * 0.1;
+    // Round to nearest 0.5 for small doses, nearest 5 for large doses
+    if (amount <= 5) return (raw * 2).round() / 2; // nearest 0.5
+    if (amount <= 50) return (raw / 2.5).round() * 2.5; // nearest 2.5
+    return (raw / 5).round() * 5.0; // nearest 5
   }
 
   int _calculateStepDownDuration() {
@@ -77,7 +89,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                     height: 4,
                     decoration: BoxDecoration(
                       color: isActive 
-                          ? AppColors.caffeine
+                          ? AppColors.medication
                           : Colors.grey.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(2),
                     ),
@@ -129,7 +141,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                   ElevatedButton(
                     onPressed: _isLoading ? null : _nextStep,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.caffeine,
+                      backgroundColor: AppColors.medication,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                     ),
@@ -167,7 +179,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Select how you want to reduce your caffeine intake.',
+            'Select how you want to reduce your medication dose.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.grey[600],
             ),
@@ -221,13 +233,13 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                   children: [
                     Expanded(
                       child: TextFormField(
-                        initialValue: _startingAmount?.toStringAsFixed(0) ?? '',
+                        initialValue: _startingAmount != null ? _formatMg(_startingAmount!) : '',
                         decoration: const InputDecoration(
                           suffix: Text('mg'),
                           border: OutlineInputBorder(),
                         ),
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                         onChanged: (value) {
                           final newAmount = double.tryParse(value) ?? 0;
                           if (_startingAmount != null && newAmount != _startingAmount) {
@@ -306,7 +318,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                 '${_calculateStepDownDuration()} weeks',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.caffeine,
+                  color: AppColors.medication,
                 ),
               ),
             ),
@@ -320,15 +332,15 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                      initialValue: _stepDownAmount.toStringAsFixed(0),
+                      initialValue: _stepDownAmount > 0 ? _formatMg(_stepDownAmount) : '',
                       decoration: const InputDecoration(
                         suffix: Text('mg'),
                         border: OutlineInputBorder(),
                       ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                       onChanged: (value) {
-                        final newAmount = double.tryParse(value) ?? 50;
+                        final newAmount = double.tryParse(value) ?? _stepDownAmount;
                         if (newAmount != _stepDownAmount) {
                           Analytics.track(
                             AnalyticsEvent.configureStepDown,
@@ -445,13 +457,13 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSummaryRow('Method', _selectedPreset!.displayName),
-                _buildSummaryRow('Starting Amount', '${_startingAmount!.toStringAsFixed(0)}mg'),
+                _buildSummaryRow('Starting Amount', '${_formatMg(_startingAmount!)}mg'),
                 _buildSummaryRow('Target Amount', '0mg'),
                 _buildSummaryRow('Duration', '$_durationWeeks weeks'),
                 _buildSummaryRow('Start Date', _formatDate(_startDate)),
                 _buildSummaryRow('End Date', _formatDate(plan.endDate)),
                 if (_selectedPreset == TaperPreset.stepDown)
-                  _buildSummaryRow('Weekly Reduction', '${_stepDownAmount.toStringAsFixed(0)}mg'),
+                  _buildSummaryRow('Reduction per Step', '${_formatMg(_stepDownAmount)}mg'),
               ],
             ),
           ),
@@ -471,7 +483,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(_formatDateShort(date)),
-                      Text('${target.toStringAsFixed(0)}mg'),
+                      Text('${_formatMg(target)}mg'),
                     ],
                   ),
                 );
@@ -527,6 +539,12 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
         ],
       ),
     );
+  }
+
+  /// Show decimals only when needed (e.g. 2.5mg → "2.5", 20mg → "20")
+  String _formatMg(double value) {
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toStringAsFixed(1);
   }
 
   String _formatDate(DateTime date) {

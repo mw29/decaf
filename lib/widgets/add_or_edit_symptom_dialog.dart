@@ -1,4 +1,4 @@
-import 'package:decaf/providers/symptoms_provider.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

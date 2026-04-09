@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:decaf/utils/analytics.dart';
+import 'package:tapermind/utils/analytics.dart';
 
 class FeedbackPopupPage extends ConsumerStatefulWidget {
   const FeedbackPopupPage({super.key});
@@ -105,12 +105,12 @@ class _FeedbackPopupPageState extends ConsumerState<FeedbackPopupPage>
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              '☕️',
+              '💊',
               style: TextStyle(fontSize: 48),
             ),
             const SizedBox(height: 16),
             Text(
-              'Enjoying Decaf?',
+              'Enjoying TaperMind?',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -118,7 +118,7 @@ class _FeedbackPopupPageState extends ConsumerState<FeedbackPopupPage>
             ),
             const SizedBox(height: 16),
             Text(
-              'Decaf is completely free and open source! If you\'re finding it helpful on your caffeine journey, we\'d really appreciate your support.',
+              'If you\'re finding TaperMind helpful on your medication tapering journey, we\'d really appreciate your support.',
               style: Theme.of(context).textTheme.bodyMedium,
               textAlign: TextAlign.center,
             ),

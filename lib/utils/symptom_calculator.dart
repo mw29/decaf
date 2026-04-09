@@ -1,5 +1,5 @@
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/symptoms_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
 
 class SymptomScores {
   final double positiveScore;

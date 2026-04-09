@@ -1,7 +1,8 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/utils/taper_calculator.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/utils/format_utils.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +46,7 @@ class TaperProgressChart extends StatelessWidget {
               children: [
                 _buildLegendItem('Planned', Colors.grey[600]!, true), // dashed
                 const SizedBox(width: 16),
-                _buildLegendItem('Actual', AppColors.caffeine, false), // solid
+                _buildLegendItem('Actual', AppColors.medication, false), // solid
               ],
             ),
             const SizedBox(height: 16),
@@ -105,7 +106,7 @@ class TaperProgressChart extends StatelessWidget {
                     LineChartBarData(
                       spots: actualData,
                       isCurved: false,
-                      color: AppColors.caffeine,
+                      color: AppColors.medication,
                       barWidth: 2,
                       dotData: const FlDotData(show: false),
                     ),
@@ -119,7 +120,7 @@ class TaperProgressChart extends StatelessWidget {
                           final date = _getDateFromX(barSpot.x);
                           final isPlanned = barSpot.barIndex == 0;
                           return LineTooltipItem(
-                            '${DateFormat('MMM d').format(date)}\n${isPlanned ? 'Planned' : 'Actual'}: ${barSpot.y.toStringAsFixed(0)}mg',
+                            '${DateFormat('MMM d').format(date)}\n${isPlanned ? 'Planned' : 'Actual'}: ${formatMg(barSpot.y)}',
                             const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -199,7 +200,7 @@ class TaperProgressChart extends StatelessWidget {
 
   double _getActualCaffeineForDay(DateTime date) {
     final dayEvents = events.where((event) {
-      if (event.type != EventType.caffeine) return false;
+      if (event.type != EventType.medication) return false;
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       return _isSameDay(eventDate, date);
     });

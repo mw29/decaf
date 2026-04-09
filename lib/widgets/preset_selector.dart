@@ -1,5 +1,5 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/models/taper_preset.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/models/taper_preset.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -45,13 +45,13 @@ class PresetSelector extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(
                 color: isSelected 
-                    ? AppColors.caffeine 
+                    ? AppColors.medication 
                     : Colors.grey.withValues(alpha: 0.3),
                 width: isSelected ? 2 : 1,
               ),
               borderRadius: BorderRadius.circular(12),
               color: isSelected 
-                  ? AppColors.caffeine.withValues(alpha: 0.05)
+                  ? AppColors.medication.withValues(alpha: 0.05)
                   : Colors.transparent,
             ),
             child: Row(
@@ -61,7 +61,7 @@ class PresetSelector extends StatelessWidget {
                   height: 48,
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? AppColors.caffeine.withValues(alpha: 0.1)
+                        ? AppColors.medication.withValues(alpha: 0.1)
                         : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -81,7 +81,7 @@ class PresetSelector extends StatelessWidget {
                         preset.displayName,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: isSelected ? AppColors.caffeine : null,
+                          color: isSelected ? AppColors.medication : null,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -99,7 +99,7 @@ class PresetSelector extends StatelessWidget {
                 if (isSelected)
                   Icon(
                     Icons.check_circle,
-                    color: AppColors.caffeine,
+                    color: AppColors.medication,
                     size: 24,
                   ),
               ],
@@ -111,7 +111,7 @@ class PresetSelector extends StatelessWidget {
   }
 
   Widget _buildPreviewGraph(BuildContext context, TaperPreset preset, bool isSelected) {
-    final color = isSelected ? AppColors.caffeine : Colors.grey;
+    final color = isSelected ? AppColors.medication : Colors.grey;
     
     return SizedBox(
       height: 40,

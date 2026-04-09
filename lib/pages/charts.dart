@@ -32,11 +32,11 @@ class ChartsPage extends ConsumerWidget {
               eventDate.day,
             );
 
-            dailyData.putIfAbsent(day, () => {'caffeine': 0.0});
+            dailyData.putIfAbsent(day, () => {'medication': 0.0});
 
-            if (event.type == EventType.caffeine) {
-              dailyData[day]!['caffeine'] =
-                  (dailyData[day]!['caffeine'] ?? 0) + event.value;
+            if (event.type == EventType.medication) {
+              dailyData[day]!['medication'] =
+                  (dailyData[day]!['medication'] ?? 0) + event.value;
             } else {
               final symptomName = event.type.name;
               dailyData[day]!.putIfAbsent(symptomName, () => []);
@@ -64,7 +64,7 @@ class ChartsPage extends ConsumerWidget {
 
           double maxCaffeine = 0;
           for (var day in sortedDays) {
-            final caffeineTotal = dailyData[day]!['caffeine'] as double;
+            final caffeineTotal = dailyData[day]!['medication'] as double;
             if (caffeineTotal > maxCaffeine) {
               maxCaffeine = caffeineTotal;
             }
@@ -95,7 +95,7 @@ class ChartsPage extends ConsumerWidget {
 
           for (var i = 0; i < sortedDays.length; i++) {
             final day = sortedDays[i];
-            final caffeineTotal = dailyData[day]!['caffeine'] as double;
+            final caffeineTotal = dailyData[day]!['medication'] as double;
             barGroups.add(
               BarChartGroupData(
                 x: i,

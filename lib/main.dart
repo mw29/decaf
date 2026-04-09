@@ -1,11 +1,14 @@
 import 'package:beaverlog_flutter/beaverlog_flutter.dart';
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/pages/home.dart';
-import 'package:decaf/pages/plan_page.dart';
-import 'package:decaf/secrets/secrets.dart';
-import 'package:decaf/widgets/add_caffeine_modal.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/pages/home.dart';
+import 'package:tapermind/pages/onboarding_page.dart';
+import 'package:tapermind/pages/plan_page.dart';
+import 'package:tapermind/providers/settings_provider.dart';
+import 'package:tapermind/secrets/secrets.dart';
+import 'package:tapermind/widgets/add_medication_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final pageIndexProvider = StateProvider<int>((ref) => 0);
 
@@ -23,18 +26,101 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = ThemeData(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.medication,
+        brightness: Brightness.light,
+        surface: AppColors.surface,
+      ),
+      useMaterial3: true,
+      scaffoldBackgroundColor: AppColors.surface,
+    );
     return MaterialApp(
-      title: 'Bottom Navigation Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColors.caffeine,
-          brightness: Brightness.light,
+      title: 'TaperMind',
+      theme: base.copyWith(
+        textTheme: GoogleFonts.nunitoTextTheme(base.textTheme),
+        cardTheme: base.cardTheme.copyWith(
+          color: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(color: Colors.black.withValues(alpha: 0.06)),
+          ),
         ),
-        useMaterial3: true,
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.medication,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+            textStyle: GoogleFonts.nunito(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.medication, width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        sliderTheme: SliderThemeData(
+          activeTrackColor: AppColors.medication,
+          thumbColor: AppColors.medication,
+          inactiveTrackColor: AppColors.medication.withValues(alpha: 0.2),
+          overlayColor: AppColors.medication.withValues(alpha: 0.1),
+        ),
+        chipTheme: ChipThemeData(
+          selectedColor: AppColors.medication,
+          labelStyle: GoogleFonts.nunito(fontSize: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppColors.surface,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          titleTextStyle: GoogleFonts.nunito(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+          ),
+          iconTheme: const IconThemeData(color: Colors.black87),
+        ),
       ),
       themeMode: ThemeMode.light,
-      home: const MainScreen(),
+      home: const AppRoot(),
       debugShowCheckedModeBanner: false,
+    );
+  }
+}
+
+class AppRoot extends ConsumerWidget {
+  const AppRoot({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settingsAsync = ref.watch(settingsProvider);
+    return settingsAsync.when(
+      data: (settings) {
+        if (!settings.onboardingComplete) {
+          return const OnboardingPage();
+        }
+        return const MainScreen();
+      },
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => const MainScreen(),
     );
   }
 }
@@ -55,7 +141,7 @@ class MainScreen extends ConsumerWidget {
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) => const AddCaffeineModal(),
+            builder: (context) => const AddMedicationModal(),
           );
         },
         child: const Icon(Icons.add),

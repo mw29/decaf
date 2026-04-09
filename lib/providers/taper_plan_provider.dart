@@ -1,5 +1,5 @@
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/providers/database_provider.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/providers/database_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uuid/uuid.dart';

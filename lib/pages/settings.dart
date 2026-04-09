@@ -1,11 +1,11 @@
-import 'package:decaf/pages/manage_caffeine_options.dart';
-import 'package:decaf/pages/manage_symptoms_page.dart';
-import 'package:decaf/providers/caffeine_options_provider.dart';
-import 'package:decaf/providers/symptoms_provider.dart';
-import 'package:decaf/utils/analytics.dart';
+import 'package:tapermind/pages/manage_medication_options.dart';
+import 'package:tapermind/pages/manage_symptoms_page.dart';
+import 'package:tapermind/providers/caffeine_options_provider.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:decaf/providers/events_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -44,11 +44,11 @@ class SettingsPage extends ConsumerWidget {
                           // Clear all user events
                           await ref.read(eventsProvider.notifier).clearAllEvents();
                           
-                          // Reset caffeine options and symptoms to their default state
+                          // Reset medication options and symptoms to their default state
                           // This will re-enable default options and disable extras
-                          final caffeineNotifier = ref.read(caffeineOptionsProvider.notifier);
+                          final caffeineNotifier = ref.read(medicationOptionsProvider.notifier);
                           final symptomsNotifier = ref.read(symptomsProvider.notifier);
-                          
+
                           await caffeineNotifier.resetToDefaults();
                           await symptomsNotifier.resetToDefaults();
                           
@@ -62,12 +62,12 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.coffee),
-            title: const Text('Manage Caffeine Options'),
+            leading: const Icon(Icons.medication),
+            title: const Text('Manage Medication Options'),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const ManageCaffeineOptionsPage(),
+                  builder: (context) => const ManageMedicationOptionsPage(),
                 ),
               );
             },
@@ -109,7 +109,7 @@ class SettingsPage extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.star),
-            title: const Text('Star Decaf on Github'),
+            title: const Text('Star TaperMind on Github'),
             onTap: () async {
               final Uri url = Uri.parse('https://github.com/drg101/decaf');
               if (await canLaunchUrl(url)) {

@@ -1,29 +1,30 @@
-import 'package:decaf/providers/events_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CaffeineListView extends ConsumerWidget {
-  final List<Event> caffeineEvents;
+class MedicationListView extends ConsumerWidget {
+  final List<Event> medicationEvents;
   final Future<void> Function(BuildContext, WidgetRef, Event) showDeleteConfirmationDialog;
 
-  const CaffeineListView({
+  const MedicationListView({
     super.key,
-    required this.caffeineEvents,
+    required this.medicationEvents,
     required this.showDeleteConfirmationDialog,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (caffeineEvents.isEmpty) {
-      return const Center(child: Text('No caffeine tracked for this day.'));
+    if (medicationEvents.isEmpty) {
+      return const Center(child: Text('No medication logged for this day.'));
     }
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: caffeineEvents.length,
+      itemCount: medicationEvents.length,
       itemBuilder: (context, index) {
-        final event = caffeineEvents[index];
+        final event = medicationEvents[index];
         return Card(
           elevation: 1,
           margin: const EdgeInsets.symmetric(
@@ -32,7 +33,7 @@ class CaffeineListView extends ConsumerWidget {
           ),
           child: ListTile(
             title: Text(event.name),
-            trailing: Text('${event.value.toStringAsFixed(0)}mg'),
+            trailing: Text(formatMg(event.value)),
             onLongPress: () => showDeleteConfirmationDialog(context, ref, event),
           ),
         );

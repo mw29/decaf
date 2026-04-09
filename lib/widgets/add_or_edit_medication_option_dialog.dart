@@ -1,28 +1,28 @@
-import 'package:decaf/providers/caffeine_options_provider.dart';
+import 'package:tapermind/providers/caffeine_options_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddOrEditCaffeineOptionDialog extends ConsumerStatefulWidget {
-  final CaffeineOption? option;
+class AddOrEditMedicationOptionDialog extends ConsumerStatefulWidget {
+  final MedicationOption? option;
 
-  const AddOrEditCaffeineOptionDialog({super.key, this.option});
+  const AddOrEditMedicationOptionDialog({super.key, this.option});
 
   @override
-  ConsumerState<AddOrEditCaffeineOptionDialog> createState() => _AddOrEditCaffeineOptionDialogState();
+  ConsumerState<AddOrEditMedicationOptionDialog> createState() => _AddOrEditMedicationOptionDialogState();
 }
 
-class _AddOrEditCaffeineOptionDialogState extends ConsumerState<AddOrEditCaffeineOptionDialog> {
+class _AddOrEditMedicationOptionDialogState extends ConsumerState<AddOrEditMedicationOptionDialog> {
   final _formKey = GlobalKey<FormState>();
   late String _name;
   late String _emoji;
-  late double _caffeineAmount;
+  late double _doseAmount;
 
   @override
   void initState() {
     super.initState();
     _name = widget.option?.name ?? '';
     _emoji = widget.option?.emoji ?? '';
-    _caffeineAmount = widget.option?.caffeineAmount ?? 0;
+    _doseAmount = widget.option?.doseAmount ?? 0;
   }
 
   @override
@@ -57,8 +57,8 @@ class _AddOrEditCaffeineOptionDialogState extends ConsumerState<AddOrEditCaffein
               onSaved: (value) => _emoji = value!,
             ),
             TextFormField(
-              initialValue: _caffeineAmount.toString(),
-              decoration: const InputDecoration(labelText: 'Caffeine Amount (mg)'),
+              initialValue: _doseAmount.toString(),
+              decoration: const InputDecoration(labelText: 'Dose Amount (mg)'),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || double.tryParse(value) == null) {
@@ -66,7 +66,7 @@ class _AddOrEditCaffeineOptionDialogState extends ConsumerState<AddOrEditCaffein
                 }
                 return null;
               },
-              onSaved: (value) => _caffeineAmount = double.parse(value!),
+              onSaved: (value) => _doseAmount = double.parse(value!),
             ),
           ],
         ),
@@ -80,16 +80,16 @@ class _AddOrEditCaffeineOptionDialogState extends ConsumerState<AddOrEditCaffein
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
-              final newOption = CaffeineOption(
+              final newOption = MedicationOption(
                 id: widget.option?.id,
                 name: _name,
                 emoji: _emoji,
-                caffeineAmount: _caffeineAmount,
+                doseAmount: _doseAmount,
               );
               if (widget.option == null) {
-                ref.read(caffeineOptionsProvider.notifier).addOption(newOption);
+                ref.read(medicationOptionsProvider.notifier).addOption(newOption);
               } else {
-                ref.read(caffeineOptionsProvider.notifier).updateOption(newOption);
+                ref.read(medicationOptionsProvider.notifier).updateOption(newOption);
               }
               Navigator.of(context).pop();
             }

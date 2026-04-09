@@ -1,4 +1,4 @@
-import 'package:decaf/providers/database_provider.dart';
+import 'package:tapermind/providers/database_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sembast/sembast.dart';
 
@@ -90,41 +90,33 @@ class SymptomsNotifier extends StateNotifier<AsyncValue<List<Symptom>>> {
           {'name': 'Energy', 'emoji': '⚡', 'enabled': true},
           {'name': 'Mood', 'emoji': '😊', 'enabled': true},
           {'name': 'Sleep Quality', 'emoji': '😴', 'enabled': true},
+          {'name': 'Focus', 'emoji': '🎯', 'enabled': true},
+          {'name': 'Calm', 'emoji': '😌', 'enabled': true},
         ];
-        
+
         final negativeSymptoms = [
-          {'name': 'Brain Fog', 'emoji': '🌫️', 'enabled': true},
-          {'name': 'Mid Day Crash', 'emoji': '💥', 'enabled': true},
           {'name': 'Anxiety', 'emoji': '😰', 'enabled': true},
+          {'name': 'Irritability', 'emoji': '😤', 'enabled': true},
+          {'name': 'Fatigue', 'emoji': '😪', 'enabled': true},
+          {'name': 'Brain Fog', 'emoji': '🌫️', 'enabled': true},
+          {'name': 'Headache', 'emoji': '🤕', 'enabled': true},
+          {'name': 'Appetite Changes', 'emoji': '🍽️', 'enabled': true},
+          {'name': 'Insomnia', 'emoji': '😵', 'enabled': true},
+          {'name': 'Mood Swings', 'emoji': '🎭', 'enabled': true},
         ];
-        
-        final additionalPositives = [
-          {'name': 'Focus', 'emoji': '🎯'},
-          {'name': 'Alertness', 'emoji': '👁️'},
-          {'name': 'Motivation', 'emoji': '💪'},
-          {'name': 'Productivity', 'emoji': '📈'},
-          {'name': 'Confidence', 'emoji': '😎'},
-          {'name': 'Sociability', 'emoji': '🗣️'},
-          {'name': 'Creativity', 'emoji': '🎨'},
-          {'name': 'Euphoria', 'emoji': '🥳'},
-          {'name': 'Mental Clarity', 'emoji': '🔍'},
-          {'name': 'Wakefulness', 'emoji': '👀'},
-        ];
-        
+
+        final additionalPositives = <Map<String, Object>>[];
+
         final additionalNegatives = [
-          {'name': 'Jitters', 'emoji': '🫨'},
+          {'name': 'Nausea', 'emoji': '🤢'},
+          {'name': 'Dizziness', 'emoji': '😵‍💫'},
+          {'name': 'Dry Mouth', 'emoji': '🏜️'},
           {'name': 'Heart Racing', 'emoji': '💓'},
-          {'name': 'Sleep Issues', 'emoji': '😵‍💫'},
-          {'name': 'Headache', 'emoji': '🤕'},
-          {'name': 'Fatigue', 'emoji': '😪'},
-          {'name': 'Stomach Upset', 'emoji': '🤢'},
-          {'name': 'Irritability', 'emoji': '😤'},
-          {'name': 'Restlessness', 'emoji': '😣'},
           {'name': 'Sweating', 'emoji': '💦'},
-          {'name': 'Tremors', 'emoji': '🤲'},
-          {'name': 'Dizziness', 'emoji': '😵'},
+          {'name': 'Restlessness', 'emoji': '😣'},
           {'name': 'Rapid Thoughts', 'emoji': '🧠'},
-          {'name': 'Dehydration', 'emoji': '🏜️'},
+          {'name': 'Emotional Blunting', 'emoji': '😶‍🌫️'},
+          {'name': 'Rebound Symptoms', 'emoji': '🔄'},
         ];
         
         // Build the complete list with automatic ordering

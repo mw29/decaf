@@ -1,10 +1,11 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/pages/plan_creation_page.dart';
-import 'package:decaf/providers/settings_provider.dart';
-import 'package:decaf/providers/taper_plan_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/widgets/active_plan_view.dart';
-import 'package:decaf/widgets/taper_plan_preview.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/pages/plan_creation_page.dart';
+import 'package:tapermind/providers/settings_provider.dart';
+import 'package:tapermind/providers/taper_plan_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/widgets/active_plan_view.dart';
+import 'package:tapermind/widgets/how_it_works_sheet.dart';
+import 'package:tapermind/widgets/taper_plan_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -55,13 +56,13 @@ class PlanPage extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppColors.caffeine.withValues(alpha: 0.1),
+                color: AppColors.medication.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Icon(
                 Icons.calendar_month,
                 size: 64,
-                color: AppColors.caffeine,
+                color: AppColors.medication,
               ),
             ),
             const SizedBox(height: 24),
@@ -74,7 +75,7 @@ class PlanPage extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Create a personalized plan to gradually reduce your caffeine intake and minimize withdrawal symptoms.',
+              'Create a personalized plan to gradually reduce your medication dose and minimize discontinuation symptoms.',
               style: Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.center,
             ),
@@ -88,7 +89,7 @@ class PlanPage extends ConsumerWidget {
                   _navigateToCreatePlan(context, ref);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.caffeine,
+                  backgroundColor: AppColors.medication,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -104,9 +105,10 @@ class PlanPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            TextButton(
-              onPressed: () => _showPlanInfo(context),
-              child: const Text('Learn more about taper planning'),
+            TextButton.icon(
+              onPressed: () => showHowItWorksSheet(context),
+              icon: const Icon(Icons.help_outline_rounded, size: 18),
+              label: const Text('How does this work?'),
             ),
             const SizedBox(height: 50), // Bottom padding for FAB
           ],
@@ -186,11 +188,11 @@ class PlanPage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Taper planning helps you reduce caffeine gradually to minimize withdrawal symptoms like:',
+                'Taper planning helps you reduce your medication dose gradually to minimize discontinuation symptoms like:',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 8),
-              Text('• Headaches\n• Fatigue\n• Brain fog\n• Irritability'),
+              Text('• Anxiety\n• Brain Fog\n• Fatigue\n• Irritability\n• Mood Swings'),
               SizedBox(height: 16),
               Text(
                 'Our plans use proven methods:',

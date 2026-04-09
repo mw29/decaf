@@ -1,9 +1,9 @@
-import 'package:decaf/providers/database_provider.dart';
+import 'package:tapermind/providers/database_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sembast/sembast.dart';
 import 'package:uuid/uuid.dart';
 
-enum EventType { caffeine, symptom }
+enum EventType { medication, symptom }
 
 class Event {
   Event({
@@ -27,9 +27,15 @@ class Event {
         'timestamp': timestamp,
       };
 
+  static EventType _parseEventType(String typeString) {
+    // Migration: 'caffeine' was the old name for medication events
+    if (typeString == 'caffeine') return EventType.medication;
+    return EventType.values.byName(typeString);
+  }
+
   static Event fromJson(Map<String, dynamic> json, String id) => Event(
         id: id,
-        type: EventType.values.byName(json['type'] as String),
+        type: _parseEventType(json['type'] as String),
         name: json['name'] as String,
         value: (json['value'] as num).toDouble(),
         timestamp: json['timestamp'] as int,

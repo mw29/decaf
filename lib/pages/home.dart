@@ -1,20 +1,22 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/pages/feedback_popup.dart';
-import 'package:decaf/pages/manage_symptoms_page.dart';
-import 'package:decaf/pages/settings.dart';
-import 'package:decaf/providers/chart_visibility_provider.dart';
-import 'package:decaf/providers/date_provider.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/settings_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/utils/symptom_calculator.dart';
-import 'package:decaf/widgets/daily_caffeine_chart.dart';
-import 'package:decaf/widgets/home_plan_progress.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/pages/feedback_popup.dart';
+import 'package:tapermind/pages/manage_symptoms_page.dart';
+import 'package:tapermind/pages/settings.dart';
+import 'package:tapermind/providers/chart_visibility_provider.dart';
+import 'package:tapermind/providers/date_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/settings_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/utils/format_utils.dart';
+import 'package:tapermind/utils/symptom_calculator.dart';
+import 'package:tapermind/widgets/daily_medication_chart.dart';
+import 'package:tapermind/widgets/home_plan_progress.dart';
+import 'package:tapermind/widgets/how_it_works_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:decaf/widgets/caffeine_list_view.dart';
-import 'package:decaf/providers/symptoms_provider.dart';
-import 'package:decaf/widgets/symptom_intensity_recorder.dart';
+import 'package:tapermind/widgets/medication_list_view.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
+import 'package:tapermind/widgets/symptom_intensity_recorder.dart';
 import 'package:intl/intl.dart';
 
 class HomePage extends ConsumerWidget {
@@ -64,7 +66,7 @@ class HomePage extends ConsumerWidget {
               child: const Text('Delete'),
               onPressed: () {
                 Analytics.track(
-                  AnalyticsEvent.deleteCaffeineEntry,
+                  AnalyticsEvent.deleteMedicationEntry,
                   {
                     'amount': event.value,
                     'name': event.name,
@@ -226,6 +228,11 @@ class HomePage extends ConsumerWidget {
                     ),
                     const Spacer(),
                     IconButton(
+                      icon: const Icon(Icons.help_outline_rounded),
+                      tooltip: 'How it works',
+                      onPressed: () => showHowItWorksSheet(context),
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.settings),
                       onPressed: () {
                         Navigator.of(context).push(
@@ -250,7 +257,7 @@ class HomePage extends ConsumerWidget {
                   ],
                 ),
               ),
-              const DailyCaffeineChart(),
+              const DailyMedicationChart(),
               eventsAsync.when(
                 data:
                     (events) => symptomsAsync.when(
@@ -261,7 +268,7 @@ class HomePage extends ConsumerWidget {
                                   DateTime.fromMillisecondsSinceEpoch(
                                     event.timestamp,
                                   );
-                              return event.type == EventType.caffeine &&
+                              return event.type == EventType.medication &&
                                   eventDate.year == selectedDate.year &&
                                   eventDate.month == selectedDate.month &&
                                   eventDate.day == selectedDate.day;
@@ -299,21 +306,21 @@ class HomePage extends ConsumerWidget {
                                       Expanded(
                                         child: _buildClickableStatsItem(
                                           context,
-                                          'Caffeine',
-                                          '${totalCaffeine.toStringAsFixed(0)} mg',
+                                          'Medication',
+                                          formatMg(totalCaffeine),
                                           Theme.of(context).colorScheme.primary,
-                                          visibility.showCaffeine,
+                                          visibility.showMedication,
                                           () {
                                             Analytics.track(
                                               AnalyticsEvent.toggleChartVisibility,
-                                              {'chart_type': 'caffeine'},
+                                              {'chart_type': 'medication'},
                                             );
                                             ref
                                                 .read(
                                                   chartVisibilityProvider
                                                       .notifier,
                                                 )
-                                                .toggleCaffeine();
+                                                .toggleMedication();
                                           },
                                         ),
                                       ),
@@ -389,12 +396,12 @@ class HomePage extends ConsumerWidget {
               ),
               eventsAsync.when(
                 data: (events) {
-                  final caffeineEvents =
+                  final medicationEvents =
                       events.where((event) {
                         final eventDate = DateTime.fromMillisecondsSinceEpoch(
                           event.timestamp,
                         );
-                        return event.type == EventType.caffeine &&
+                        return event.type == EventType.medication &&
                             eventDate.year == selectedDate.year &&
                             eventDate.month == selectedDate.month &&
                             eventDate.day == selectedDate.day;
@@ -413,14 +420,14 @@ class HomePage extends ConsumerWidget {
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              'Caffeine',
+                              'Medication',
                               style: Theme.of(context).textTheme.titleLarge,
                             ),
                           ),
                         ),
                         const SizedBox(height: 8),
-                        CaffeineListView(
-                          caffeineEvents: caffeineEvents,
+                        MedicationListView(
+                          medicationEvents: medicationEvents,
                           showDeleteConfirmationDialog:
                               _showDeleteConfirmationDialog,
                         ),

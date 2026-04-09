@@ -1,20 +1,20 @@
 
-import 'package:decaf/providers/caffeine_options_provider.dart';
-import 'package:decaf/utils/analytics.dart';
-import 'package:decaf/widgets/add_or_edit_caffeine_option_dialog.dart';
+import 'package:tapermind/providers/caffeine_options_provider.dart';
+import 'package:tapermind/utils/analytics.dart';
+import 'package:tapermind/widgets/add_or_edit_medication_option_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ManageCaffeineOptionsPage extends ConsumerWidget {
-  const ManageCaffeineOptionsPage({super.key});
+class ManageMedicationOptionsPage extends ConsumerWidget {
+  const ManageMedicationOptionsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final options = ref.watch(caffeineOptionsProvider);
+    final options = ref.watch(medicationOptionsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Caffeine Options'),
+        title: const Text('Manage Medication Options'),
       ),
       body: options.when(
         data: (options) {
@@ -25,10 +25,10 @@ class ManageCaffeineOptionsPage extends ConsumerWidget {
               if (newIndex > oldIndex) {
                 newIndex -= 1;
               }
-              final reorderedOptions = List<CaffeineOption>.from(options);
+              final reorderedOptions = List<MedicationOption>.from(options);
               final option = reorderedOptions.removeAt(oldIndex);
               reorderedOptions.insert(newIndex, option);
-              ref.read(caffeineOptionsProvider.notifier).reorderOptions(reorderedOptions);
+              ref.read(medicationOptionsProvider.notifier).reorderOptions(reorderedOptions);
             },
             itemBuilder: (context, index) {
               final option = options[index];
@@ -50,7 +50,7 @@ class ManageCaffeineOptionsPage extends ConsumerWidget {
                   ),
                 ),
                 subtitle: Text(
-                  '${option.caffeineAmount}mg',
+                  '${option.doseAmount}mg',
                   style: TextStyle(
                     color: option.enabled ? null : Colors.grey,
                   ),
@@ -62,29 +62,29 @@ class ManageCaffeineOptionsPage extends ConsumerWidget {
                       value: option.enabled,
                       onChanged: (value) {
                         Analytics.track(
-                          AnalyticsEvent.toggleCaffeineOption,
+                          AnalyticsEvent.toggleMedicationOption,
                           {
                             'option_name': option.name,
                             'enabled': value,
-                            'amount': option.caffeineAmount,
+                            'amount': option.doseAmount,
                           },
                         );
-                        ref.read(caffeineOptionsProvider.notifier).toggleOption(option.id!, value);
+                        ref.read(medicationOptionsProvider.notifier).toggleOption(option.id!, value);
                       },
                     ),
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
                         Analytics.track(
-                          AnalyticsEvent.editCaffeineOption,
+                          AnalyticsEvent.editMedicationOption,
                           {
                             'option_name': option.name,
-                            'amount': option.caffeineAmount,
+                            'amount': option.doseAmount,
                           },
                         );
                         showDialog(
                           context: context,
-                          builder: (context) => AddOrEditCaffeineOptionDialog(option: option),
+                          builder: (context) => AddOrEditMedicationOptionDialog(option: option),
                         );
                       },
                     ),
@@ -92,13 +92,13 @@ class ManageCaffeineOptionsPage extends ConsumerWidget {
                       icon: const Icon(Icons.delete),
                       onPressed: () {
                         Analytics.track(
-                          AnalyticsEvent.deleteCaffeineOption,
+                          AnalyticsEvent.deleteMedicationOption,
                           {
                             'option_name': option.name,
-                            'amount': option.caffeineAmount,
+                            'amount': option.doseAmount,
                           },
                         );
-                        ref.read(caffeineOptionsProvider.notifier).deleteOption(option.id!);
+                        ref.read(medicationOptionsProvider.notifier).deleteOption(option.id!);
                       },
                     ),
                   ],
@@ -112,10 +112,10 @@ class ManageCaffeineOptionsPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Analytics.track(AnalyticsEvent.addCustomCaffeineOption);
+          Analytics.track(AnalyticsEvent.addCustomMedicationOption);
           showDialog(
             context: context,
-            builder: (context) => const AddOrEditCaffeineOptionDialog(),
+            builder: (context) => const AddOrEditMedicationOptionDialog(),
           );
         },
         child: const Icon(Icons.add),

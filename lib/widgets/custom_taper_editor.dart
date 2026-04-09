@@ -1,4 +1,4 @@
-import 'package:decaf/constants/colors.dart';
+import 'package:tapermind/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -159,7 +159,7 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
           _pendingTarget = null;
           // Set controller to current target or interpolated value
           final currentTarget = _targets[dayIndex] ?? targetAmount;
-          _targetController.text = currentTarget.toStringAsFixed(0);
+          _targetController.text = _formatMg(currentTarget);
         });
       },
       child: Container(
@@ -167,14 +167,14 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
         margin: const EdgeInsets.all(1),
         decoration: BoxDecoration(
           color: isSelected 
-              ? AppColors.caffeine.withValues(alpha: 0.2)
+              ? AppColors.medication.withValues(alpha: 0.2)
               : (isSetPoint 
-                  ? AppColors.caffeine.withValues(alpha: 0.1)
+                  ? AppColors.medication.withValues(alpha: 0.1)
                   : Colors.transparent),
           border: isSetPoint 
-              ? Border.all(color: AppColors.caffeine, width: 2)
+              ? Border.all(color: AppColors.medication, width: 2)
               : (isSelected 
-                  ? Border.all(color: AppColors.caffeine.withValues(alpha: 0.5), width: 1)
+                  ? Border.all(color: AppColors.medication.withValues(alpha: 0.5), width: 1)
                   : null),
           borderRadius: BorderRadius.circular(4),
         ),
@@ -185,16 +185,16 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
               date.day.toString(),
               style: TextStyle(
                 fontWeight: (isFirst || isLast || isSetPoint) ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.caffeine : Colors.black,
+                color: isSelected ? AppColors.medication : Colors.black,
                 fontSize: 14,
               ),
             ),
             const SizedBox(height: 2),
             Text(
-              '${targetAmount.toStringAsFixed(0)}mg',
+              '${_formatMg(targetAmount)}mg',
               style: TextStyle(
                 fontSize: 10,
-                color: isSetPoint ? AppColors.caffeine : Colors.grey[600],
+                color: isSetPoint ? AppColors.medication : Colors.grey[600],
                 fontWeight: isSetPoint ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -244,8 +244,8 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
                       suffix: Text('mg'),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
                     onChanged: (value) {
                       _pendingTarget = double.tryParse(value);
                     },
@@ -285,7 +285,7 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.caffeine,
+                    backgroundColor: AppColors.medication,
                     foregroundColor: Colors.white,
                   ),
                   child: const Text('Confirm'),
@@ -327,8 +327,8 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
                   final date = widget.startDate.add(Duration(days: dayIndex));
                   final target = _targets[dayIndex]!;
                   return Chip(
-                    label: Text('Day ${dayIndex + 1}: ${target.toStringAsFixed(0)}mg'),
-                    backgroundColor: AppColors.caffeine.withValues(alpha: 0.1),
+                    label: Text('Day ${dayIndex + 1}: ${_formatMg(target)}mg'),
+                    backgroundColor: AppColors.medication.withValues(alpha: 0.1),
                   );
                 }).toList(),
               ),
@@ -375,6 +375,11 @@ class _CustomTaperEditorState extends State<CustomTaperEditor> {
     }
     
     return result;
+  }
+
+  String _formatMg(double value) {
+    if (value == value.roundToDouble()) return value.toInt().toString();
+    return value.toStringAsFixed(1);
   }
 
   String _formatDate(DateTime date) {

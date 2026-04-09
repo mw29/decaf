@@ -1,13 +1,13 @@
 import 'package:beaverlog_flutter/beaverlog_flutter.dart';
 
 enum AnalyticsEvent {
-  addCaffeineEntry,
-  deleteCaffeineEntry,
+  addMedicationEntry,
+  deleteMedicationEntry,
   recordSymptomIntensity,
-  toggleCaffeineOption,
-  addCustomCaffeineOption,
-  editCaffeineOption,
-  deleteCaffeineOption,
+  toggleMedicationOption,
+  addCustomMedicationOption,
+  editMedicationOption,
+  deleteMedicationOption,
   toggleSymptom,
   addCustomSymptom,
   editSymptom,

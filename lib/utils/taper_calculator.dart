@@ -1,5 +1,5 @@
-import 'package:decaf/models/taper_plan.dart';
-import 'package:decaf/models/taper_preset.dart';
+import 'package:tapermind/models/taper_plan.dart';
+import 'package:tapermind/models/taper_preset.dart';
 
 class TaperCalculator {
   static double calculateTargetForDay(TaperPlan plan, DateTime date) {
@@ -195,24 +195,24 @@ class TaperCalculator {
 
   static double calculateCurrentIntake(List<dynamic> recentEvents, {int dayLookback = 7}) {
     final cutoffDate = DateTime.now().subtract(Duration(days: dayLookback));
-    final recentCaffeineEvents = recentEvents.where((event) {
+    final recentMedicationEvents = recentEvents.where((event) {
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       return eventDate.isAfter(cutoffDate);
     }).toList();
 
-    if (recentCaffeineEvents.isEmpty) {
-      return 200.0; // Default fallback
+    if (recentMedicationEvents.isEmpty) {
+      return 20.0; // Default fallback
     }
 
     final dailyTotals = <DateTime, double>{};
-    for (final event in recentCaffeineEvents) {
+    for (final event in recentMedicationEvents) {
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       final day = DateTime(eventDate.year, eventDate.month, eventDate.day);
       dailyTotals.update(day, (value) => value + event.value, ifAbsent: () => event.value);
     }
 
     if (dailyTotals.isEmpty) {
-      return 200.0; // Default fallback
+      return 20.0; // Default fallback
     }
 
     final averageIntake = dailyTotals.values.reduce((a, b) => a + b) / dailyTotals.length;

@@ -1,5 +1,5 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/providers/settings_provider.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/providers/settings_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,13 +24,13 @@ class TaperPlanPreview extends ConsumerWidget {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: AppColors.caffeine.withOpacity(0.1),
+                      color: AppColors.medication.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
                       Icons.calendar_month,
                       size: 64,
-                      color: AppColors.caffeine,
+                      color: AppColors.medication,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -43,7 +43,7 @@ class TaperPlanPreview extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Create a personalized caffeine reduction plan with:',
+                    'Create a personalized medication tapering plan with:',
                     style: Theme.of(context).textTheme.bodyLarge,
                     textAlign: TextAlign.center,
                   ),
@@ -66,7 +66,7 @@ class TaperPlanPreview extends ConsumerWidget {
                     context,
                     '📊',
                     'Progress Tracking',
-                    'See your plan vs actual intake on charts',
+                    'See your plan vs actual dose on charts',
                   ),
                   const SizedBox(height: 32),
                   Container(
@@ -108,7 +108,7 @@ class TaperPlanPreview extends ConsumerWidget {
                   ref.read(settingsProvider.notifier).enableTaperPlanning();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.caffeine,
+                  backgroundColor: AppColors.medication,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

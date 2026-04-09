@@ -1,5 +1,5 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/providers/symptoms_provider.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/providers/symptoms_provider.dart';
 import 'package:flutter/material.dart';
 
 class SymptomIntensityRecorder extends StatefulWidget {

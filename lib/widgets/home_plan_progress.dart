@@ -1,9 +1,10 @@
-import 'package:decaf/constants/colors.dart';
-import 'package:decaf/main.dart';
-import 'package:decaf/providers/events_provider.dart';
-import 'package:decaf/providers/settings_provider.dart';
-import 'package:decaf/providers/taper_plan_provider.dart';
-import 'package:decaf/utils/taper_calculator.dart';
+import 'package:tapermind/constants/colors.dart';
+import 'package:tapermind/main.dart';
+import 'package:tapermind/providers/events_provider.dart';
+import 'package:tapermind/providers/settings_provider.dart';
+import 'package:tapermind/providers/taper_plan_provider.dart';
+import 'package:tapermind/utils/format_utils.dart';
+import 'package:tapermind/utils/taper_calculator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,15 +46,15 @@ class HomePlanProgress extends ConsumerWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppColors.caffeine.withValues(alpha: 0.1),
-            AppColors.caffeine.withValues(alpha: 0.05),
+            AppColors.medication.withValues(alpha: 0.1),
+            AppColors.medication.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppColors.caffeine.withValues(alpha: 0.2),
+          color: AppColors.medication.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -64,12 +65,12 @@ class HomePlanProgress extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.caffeine.withValues(alpha: 0.1),
+                  color: AppColors.medication.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
                   Icons.calendar_month,
-                  color: AppColors.caffeine,
+                  color: AppColors.medication,
                   size: 28,
                 ),
               ),
@@ -86,7 +87,7 @@ class HomePlanProgress extends ConsumerWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Reduce caffeine gradually with personalized schedules',
+                      'Reduce your medication dose gradually with personalized schedules',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -164,7 +165,7 @@ class HomePlanProgress extends ConsumerWidget {
           children: [
             const Icon(
               Icons.calendar_month,
-              color: AppColors.caffeine,
+              color: AppColors.medication,
               size: 32,
             ),
             const SizedBox(width: 16),
@@ -299,7 +300,7 @@ class HomePlanProgress extends ConsumerWidget {
                     child: _buildTodayMetric(
                       context,
                       'Target',
-                      '${todayTarget.toStringAsFixed(0)}mg',
+                      formatMg(todayTarget),
                       Colors.grey[600]!,
                     ),
                   ),
@@ -312,7 +313,7 @@ class HomePlanProgress extends ConsumerWidget {
                     child: _buildTodayMetric(
                       context,
                       'Actual',
-                      '${todayActual.toStringAsFixed(0)}mg',
+                      formatMg(todayActual),
                       isOnTrack ? Colors.green : Colors.orange,
                     ),
                   ),
@@ -351,7 +352,7 @@ class HomePlanProgress extends ConsumerWidget {
 
   double _getActualCaffeineForDay(List<Event> events, DateTime date) {
     final dayEvents = events.where((event) {
-      if (event.type != EventType.caffeine) return false;
+      if (event.type != EventType.medication) return false;
       final eventDate = DateTime.fromMillisecondsSinceEpoch(event.timestamp);
       return eventDate.year == date.year &&
              eventDate.month == date.month &&

@@ -1,5 +1,5 @@
-import 'package:decaf/providers/database_provider.dart';
-import 'package:decaf/providers/events_provider.dart';
+import 'package:tapermind/providers/database_provider.dart';
+import 'package:tapermind/providers/events_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sembast/sembast.dart';
 
@@ -7,17 +7,20 @@ class AppSettings {
   final bool taperPlanningEnabled;
   final DateTime? firstAppUsage;
   final bool feedbackPopupShown;
+  final bool onboardingComplete;
 
   const AppSettings({
     this.taperPlanningEnabled = false,
     this.firstAppUsage,
     this.feedbackPopupShown = false,
+    this.onboardingComplete = false,
   });
 
   Map<String, dynamic> toJson() => {
     'taperPlanningEnabled': taperPlanningEnabled,
     'firstAppUsage': firstAppUsage?.millisecondsSinceEpoch,
     'feedbackPopupShown': feedbackPopupShown,
+    'onboardingComplete': onboardingComplete,
   };
 
   static AppSettings fromJson(Map<String, dynamic>? json) => AppSettings(
@@ -27,17 +30,20 @@ class AppSettings {
             ? DateTime.fromMillisecondsSinceEpoch(json!['firstAppUsage'] as int)
             : null,
     feedbackPopupShown: json?['feedbackPopupShown'] as bool? ?? false,
+    onboardingComplete: json?['onboardingComplete'] as bool? ?? false,
   );
 
   AppSettings copyWith({
     bool? taperPlanningEnabled,
     DateTime? firstAppUsage,
     bool? feedbackPopupShown,
+    bool? onboardingComplete,
   }) {
     return AppSettings(
       taperPlanningEnabled: taperPlanningEnabled ?? this.taperPlanningEnabled,
       firstAppUsage: firstAppUsage ?? this.firstAppUsage,
       feedbackPopupShown: feedbackPopupShown ?? this.feedbackPopupShown,
+      onboardingComplete: onboardingComplete ?? this.onboardingComplete,
     );
   }
 }
@@ -96,6 +102,13 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
     }
   }
 
+  Future<void> completeOnboarding() async {
+    final currentSettings = await future;
+    final newSettings = currentSettings.copyWith(onboardingComplete: true);
+    await _saveSettings(newSettings);
+    state = AsyncData(newSettings);
+  }
+
   Future<void> markFeedbackPopupShown() async {
     final currentSettings = await future;
     final newSettings = currentSettings.copyWith(feedbackPopupShown: true);
@@ -119,11 +132,11 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
     if (daysSinceFirst < 1) return false;
 
-    // Check if user has added caffeine events
-    final caffeineEvents =
-        events.where((event) => event.type == EventType.caffeine).toList();
+    // Check if user has added medication events
+    final medicationEvents =
+        events.where((event) => event.type == EventType.medication).toList();
 
-    return caffeineEvents.isNotEmpty;
+    return medicationEvents.isNotEmpty;
   }
 }
 

@@ -1,23 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ChartVisibilityState {
-  final bool showCaffeine;
+  final bool showMedication;
   final bool showPositives;
   final bool showNegatives;
 
   ChartVisibilityState({
-    this.showCaffeine = true,
+    this.showMedication = true,
     this.showPositives = true,
     this.showNegatives = true,
   });
 
   ChartVisibilityState copyWith({
-    bool? showCaffeine,
+    bool? showMedication,
     bool? showPositives,
     bool? showNegatives,
   }) {
     return ChartVisibilityState(
-      showCaffeine: showCaffeine ?? this.showCaffeine,
+      showMedication: showMedication ?? this.showMedication,
       showPositives: showPositives ?? this.showPositives,
       showNegatives: showNegatives ?? this.showNegatives,
     );
@@ -27,8 +27,8 @@ class ChartVisibilityState {
 class ChartVisibilityNotifier extends StateNotifier<ChartVisibilityState> {
   ChartVisibilityNotifier() : super(ChartVisibilityState());
 
-  void toggleCaffeine() {
-    state = state.copyWith(showCaffeine: !state.showCaffeine);
+  void toggleMedication() {
+    state = state.copyWith(showMedication: !state.showMedication);
   }
 
   void togglePositives() {
