@@ -68,8 +68,10 @@ class _SymptomIntensityRecorderState extends State<SymptomIntensityRecorder> {
         children: [
           Expanded(
             child: Text(
-              '${widget.symptom.emoji} ${widget.symptom.name}',
-              style: Theme.of(context).textTheme.titleMedium,
+              widget.symptom.name,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
           Row(
@@ -84,12 +86,12 @@ class _SymptomIntensityRecorderState extends State<SymptomIntensityRecorder> {
                   });
                 },
                 child: Container(
-                  width: 30,
-                  height: 30,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 32,
+                  height: 32,
+                  margin: const EdgeInsets.symmetric(horizontal: 2),
                   decoration: BoxDecoration(
                     color: _getColorForIntensity(index),
-                    border: (_intensity == -1 || index > _intensity) ? Border.all(color: Colors.white, width: 1) : null,
+                    border: (_intensity == -1 || index > _intensity) ? Border.all(color: AppColors.border, width: 1) : null,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Center(

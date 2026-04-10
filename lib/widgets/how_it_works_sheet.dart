@@ -61,7 +61,7 @@ class _HowItWorksSheet extends StatelessWidget {
                           style: GoogleFonts.nunito(
                             fontSize: 22,
                             fontWeight: FontWeight.w800,
-                            color: Colors.black87,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ),
@@ -201,7 +201,7 @@ class _Step extends StatelessWidget {
                   style: GoogleFonts.nunito(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
-                    color: Colors.black87,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),

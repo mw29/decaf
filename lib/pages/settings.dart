@@ -107,16 +107,6 @@ class SettingsPage extends ConsumerWidget {
               }
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.star),
-            title: const Text('Star TaperMind on Github'),
-            onTap: () async {
-              final Uri url = Uri.parse('https://github.com/drg101/decaf');
-              if (await canLaunchUrl(url)) {
-                await launchUrl(url);
-              }
-            },
-          ),
         ],
       ),
     );

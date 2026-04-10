@@ -1,3 +1,4 @@
+import 'package:tapermind/constants/colors.dart';
 import 'package:tapermind/providers/events_provider.dart';
 import 'package:tapermind/utils/format_utils.dart';
 import 'package:flutter/material.dart';
@@ -25,16 +26,49 @@ class MedicationListView extends ConsumerWidget {
       itemCount: medicationEvents.length,
       itemBuilder: (context, index) {
         final event = medicationEvents[index];
-        return Card(
-          elevation: 1,
-          margin: const EdgeInsets.symmetric(
-            horizontal: 4,
-            vertical: 4,
+        return Dismissible(
+          key: ValueKey(event.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 20),
+            decoration: BoxDecoration(
+              color: AppColors.negativeEffect,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: const Icon(Icons.delete_outline, color: Colors.white),
           ),
-          child: ListTile(
-            title: Text(event.name),
-            trailing: Text(formatMg(event.value)),
-            onLongPress: () => showDeleteConfirmationDialog(context, ref, event),
+          confirmDismiss: (_) async {
+            return await showDialog<bool>(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Delete entry?'),
+                content: Text('Remove ${formatMg(event.value)} from today?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('Cancel'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.negativeEffect,
+                    ),
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: const Text('Delete'),
+                  ),
+                ],
+              ),
+            ) ?? false;
+          },
+          onDismissed: (_) {
+            ref.read(eventsProvider.notifier).deleteEvent(event.id!);
+          },
+          child: Card(
+            margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: ListTile(
+              title: Text(event.name),
+              trailing: Text(formatMg(event.value)),
+            ),
           ),
         );
       },

@@ -27,6 +27,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
   DateTime _startDate = DateTime.now();
   int _durationWeeks = 4;
   double? _startingAmount;
+  double _targetAmount = 0;
   double _stepDownAmount = 0; // derived from starting amount once loaded
   int _stepDownIntervalDays = 7;
   Map<int, double> _customTargets = {};
@@ -56,14 +57,21 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
   double _sensibleStepDefault(double amount) {
     final raw = amount * 0.1;
     // Round to nearest 0.5 for small doses, nearest 5 for large doses
-    if (amount <= 5) return (raw * 2).round() / 2; // nearest 0.5
-    if (amount <= 50) return (raw / 2.5).round() * 2.5; // nearest 2.5
-    return (raw / 5).round() * 5.0; // nearest 5
+    double result;
+    if (amount <= 5) {
+      result = (raw * 2).round() / 2; // nearest 0.5
+    } else if (amount <= 50) {
+      result = (raw / 2.5).round() * 2.5; // nearest 2.5
+    } else {
+      result = (raw / 5).round() * 5.0; // nearest 5
+    }
+    return result > 0 ? result : 0.5; // never return 0
   }
 
   int _calculateStepDownDuration() {
     if (_startingAmount == null || _stepDownAmount <= 0) return 4;
-    final steps = (_startingAmount! / _stepDownAmount).ceil();
+    final reduction = (_startingAmount! - _targetAmount).clamp(0, double.infinity);
+    final steps = (reduction / _stepDownAmount).ceil();
     return ((steps * _stepDownIntervalDays) / 7).ceil();
   }
 
@@ -262,7 +270,36 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
           ),
           
           const SizedBox(height: 16),
-          
+
+          // Target amount
+          _buildConfigCard(
+            'Target Amount',
+            'The dose you want to reach (default: 0mg)',
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: _targetAmount > 0 ? _formatMg(_targetAmount) : '',
+                    decoration: const InputDecoration(
+                      suffix: Text('mg'),
+                      hintText: '0',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))],
+                    onChanged: (value) {
+                      setState(() {
+                        _targetAmount = double.tryParse(value) ?? 0;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
           // Start date
           _buildConfigCard(
             'Start Date',
@@ -458,7 +495,7 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
               children: [
                 _buildSummaryRow('Method', _selectedPreset!.displayName),
                 _buildSummaryRow('Starting Amount', '${_formatMg(_startingAmount!)}mg'),
-                _buildSummaryRow('Target Amount', '0mg'),
+                _buildSummaryRow('Target Amount', '${_formatMg(_targetAmount)}mg'),
                 _buildSummaryRow('Duration', '$_durationWeeks weeks'),
                 _buildSummaryRow('Start Date', _formatDate(_startDate)),
                 _buildSummaryRow('End Date', _formatDate(plan.endDate)),
@@ -609,14 +646,17 @@ class _PlanCreationPageState extends ConsumerState<PlanCreationPage> {
           startDate: _startDate,
           durationWeeks: _durationWeeks,
           startingAmount: _startingAmount!,
+          targetAmount: _targetAmount,
         );
       case TaperPreset.stepDown:
+        final stepReduction = (_stepDownAmount > 0 ? _stepDownAmount : _sensibleStepDefault(_startingAmount!)).clamp(0.5, double.infinity);
         return TaperCalculator.createStepDownPlan(
           id: '',
           startDate: _startDate,
           durationWeeks: _calculateStepDownDuration(),
           startingAmount: _startingAmount!,
-          stepReduction: _stepDownAmount,
+          targetAmount: _targetAmount,
+          stepReduction: stepReduction,
           stepIntervalDays: _stepDownIntervalDays,
         );
       case TaperPreset.custom:

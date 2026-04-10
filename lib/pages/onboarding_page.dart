@@ -75,9 +75,24 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     return Scaffold(
       body: SafeArea(
         child: optionsAsync.when(
-          data: (_) => _step == 0
-              ? _buildStepMed(context)
-              : _buildStepDosage(context),
+          data: (_) => AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder: (child, animation) {
+              final isForward = child.key == const ValueKey(1);
+              final begin = isForward
+                  ? const Offset(1.0, 0.0)
+                  : const Offset(-1.0, 0.0);
+              return SlideTransition(
+                position: Tween<Offset>(begin: begin, end: Offset.zero)
+                    .animate(CurvedAnimation(
+                        parent: animation, curve: Curves.easeOutCubic)),
+                child: FadeTransition(opacity: animation, child: child),
+              );
+            },
+            child: _step == 0
+                ? KeyedSubtree(key: const ValueKey(0), child: _buildStepMed(context))
+                : KeyedSubtree(key: const ValueKey(1), child: _buildStepDosage(context)),
+          ),
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text('Error: $e')),
         ),
@@ -118,10 +133,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               return ChoiceChip(
                 label: Text(name),
                 selected: isSelected,
-                onSelected: (_) => setState(() => _selectedMedName = name),
+                onSelected: (_) => setState(() =>
+                    _selectedMedName = isSelected ? null : name),
                 selectedColor: AppColors.medication,
+                disabledColor: Colors.white,
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black87,
+                  color: isSelected ? Colors.white : AppColors.textPrimary,
                   fontWeight:
                       isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -172,13 +189,25 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     final canFinish = _mgController.text.trim().isNotEmpty &&
         double.tryParse(_mgController.text.trim()) != null;
 
-    return Padding(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Back button at top
+        Padding(
+          padding: const EdgeInsets.only(left: 8, top: 8),
+          child: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+            onPressed: () => setState(() => _step = 0),
+          ),
+        ),
+        Expanded(
+          child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 40),
-          const Text('📏', style: TextStyle(fontSize: 48)),
+          const SizedBox(height: 16),
+          const Text('⚖️', style: TextStyle(fontSize: 48)),
           const SizedBox(height: 16),
           Text(
             "What's your\ncurrent dosage?",
@@ -188,7 +217,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'How many mg of $_selectedMedName do you take per day?',
+            _selectedMedName == 'Other'
+                ? 'How many mg of your medication do you take per day?'
+                : 'How many mg of $_selectedMedName do you take per day?',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               color: Colors.grey[600],
             ),
@@ -220,10 +251,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
             ),
           ),
           const Spacer(),
-          TextButton(
-            onPressed: () => setState(() => _step = 0),
-            child: const Text('← Back'),
-          ),
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -257,6 +284,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           const SizedBox(height: 16),
         ],
       ),
+          ),
+        ),
+      ],
     );
   }
 }

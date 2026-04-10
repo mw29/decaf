@@ -1,124 +1,132 @@
-
+import 'package:tapermind/constants/colors.dart';
 import 'package:tapermind/providers/caffeine_options_provider.dart';
-import 'package:tapermind/utils/analytics.dart';
-import 'package:tapermind/widgets/add_or_edit_medication_option_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+const _medicationGroups = [
+  'Adderall',
+  'Vyvanse',
+  'Dexedrine',
+  'Zenzedi',
+  'Ritalin',
+  'Concerta',
+  'Focalin',
+  'Strattera',
+  'Qelbree',
+  'Intuniv',
+  'Kapvay',
+  'Wellbutrin',
+  'Other',
+];
 
 class ManageMedicationOptionsPage extends ConsumerWidget {
   const ManageMedicationOptionsPage({super.key});
 
+  String? _currentSelection(List<MedicationOption> options) {
+    final enabled = options.where((o) => o.enabled).toList();
+    if (enabled.isEmpty) return null;
+    // Try to match enabled options back to a group name
+    for (final group in _medicationGroups) {
+      if (group == 'Other') continue;
+      final groupOptions = options.where((o) => o.name.startsWith(group));
+      final allEnabled = groupOptions.isNotEmpty &&
+          groupOptions.every((o) => o.enabled) &&
+          enabled.every((o) => o.name.startsWith(group));
+      if (allEnabled) return group;
+    }
+    // If all options are enabled, it's "Other"
+    if (enabled.length == options.length) return 'Other';
+    return null;
+  }
+
+  Future<void> _selectMed(
+    WidgetRef ref,
+    List<MedicationOption> options,
+    String name,
+  ) async {
+    final notifier = ref.read(medicationOptionsProvider.notifier);
+    for (final opt in options) {
+      if (opt.id != null) await notifier.toggleOption(opt.id!, false);
+    }
+    if (name == 'Other') {
+      for (final opt in options) {
+        if (opt.id != null) await notifier.toggleOption(opt.id!, true);
+      }
+    } else {
+      for (final opt in options) {
+        if (opt.id != null && opt.name.startsWith(name)) {
+          await notifier.toggleOption(opt.id!, true);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final options = ref.watch(medicationOptionsProvider);
+    final optionsAsync = ref.watch(medicationOptionsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Medication Options'),
+        title: const Text('Medication'),
       ),
-      body: options.when(
+      body: optionsAsync.when(
         data: (options) {
-          return ReorderableListView.builder(
-            padding: const EdgeInsets.only(bottom: 100),
-            itemCount: options.length,
-            onReorder: (oldIndex, newIndex) {
-              if (newIndex > oldIndex) {
-                newIndex -= 1;
-              }
-              final reorderedOptions = List<MedicationOption>.from(options);
-              final option = reorderedOptions.removeAt(oldIndex);
-              reorderedOptions.insert(newIndex, option);
-              ref.read(medicationOptionsProvider.notifier).reorderOptions(reorderedOptions);
-            },
-            itemBuilder: (context, index) {
-              final option = options[index];
-              return ListTile(
-                key: ValueKey(option.id),
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.drag_handle, color: Colors.grey[600]),
-                    const SizedBox(width: 8),
-                    Text(option.emoji, style: const TextStyle(fontSize: 24)),
-                  ],
+          final selected = _currentSelection(options);
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Which medication are you tapering?',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                 ),
-                title: Text(
-                  option.name,
-                  style: TextStyle(
-                    color: option.enabled ? null : Colors.grey,
-                    fontWeight: option.enabled ? FontWeight.normal : FontWeight.w300,
-                  ),
+                const SizedBox(height: 4),
+                Text(
+                  'This determines which dose options appear when logging.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                 ),
-                subtitle: Text(
-                  '${option.doseAmount}mg',
-                  style: TextStyle(
-                    color: option.enabled ? null : Colors.grey,
-                  ),
+                const SizedBox(height: 24),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: _medicationGroups.map((name) {
+                    final isSelected = selected == name;
+                    return ChoiceChip(
+                      label: Text(name),
+                      selected: isSelected,
+                      onSelected: (_) => _selectMed(ref, options, name),
+                      selectedColor: AppColors.medication,
+                      disabledColor: Colors.white,
+                      labelStyle: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                      ),
+                      side: BorderSide(
+                        color: isSelected
+                            ? AppColors.medication
+                            : AppColors.border,
+                      ),
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                    );
+                  }).toList(),
                 ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Switch(
-                      value: option.enabled,
-                      onChanged: (value) {
-                        Analytics.track(
-                          AnalyticsEvent.toggleMedicationOption,
-                          {
-                            'option_name': option.name,
-                            'enabled': value,
-                            'amount': option.doseAmount,
-                          },
-                        );
-                        ref.read(medicationOptionsProvider.notifier).toggleOption(option.id!, value);
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () {
-                        Analytics.track(
-                          AnalyticsEvent.editMedicationOption,
-                          {
-                            'option_name': option.name,
-                            'amount': option.doseAmount,
-                          },
-                        );
-                        showDialog(
-                          context: context,
-                          builder: (context) => AddOrEditMedicationOptionDialog(option: option),
-                        );
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        Analytics.track(
-                          AnalyticsEvent.deleteMedicationOption,
-                          {
-                            'option_name': option.name,
-                            'amount': option.doseAmount,
-                          },
-                        );
-                        ref.read(medicationOptionsProvider.notifier).deleteOption(option.id!);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+              ],
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text('Error: $error')),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Analytics.track(AnalyticsEvent.addCustomMedicationOption);
-          showDialog(
-            context: context,
-            builder: (context) => const AddOrEditMedicationOptionDialog(),
-          );
-        },
-        child: const Icon(Icons.add),
+        error: (e, _) => Center(child: Text('Error: $e')),
       ),
     );
   }

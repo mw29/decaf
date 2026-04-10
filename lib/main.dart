@@ -29,13 +29,13 @@ class MyApp extends StatelessWidget {
     final base = ThemeData(
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.medication,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         surface: AppColors.surface,
       ).copyWith(
         surface: AppColors.surface,
-        onSurface: Colors.white,
+        onSurface: AppColors.textPrimary,
         primary: AppColors.medication,
-        onPrimary: AppColors.background,
+        onPrimary: Colors.white,
         secondary: AppColors.medication,
       ),
       useMaterial3: true,
@@ -45,23 +45,21 @@ class MyApp extends StatelessWidget {
       title: 'TaperMind',
       theme: base.copyWith(
         textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).apply(
-          bodyColor: Colors.white,
-          displayColor: Colors.white,
+          bodyColor: AppColors.textPrimary,
+          displayColor: AppColors.textPrimary,
         ),
         cardTheme: base.cardTheme.copyWith(
           color: AppColors.surfaceCard,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: Colors.white.withValues(alpha: 0.07),
-            ),
+            side: const BorderSide(color: AppColors.border),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.medication,
-            foregroundColor: AppColors.background,
+            foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),
@@ -79,11 +77,11 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+            borderSide: const BorderSide(color: AppColors.border),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+            borderSide: const BorderSide(color: AppColors.border),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -91,8 +89,8 @@ class MyApp extends StatelessWidget {
           ),
           filled: true,
           fillColor: AppColors.surfaceCard,
-          labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.3)),
+          labelStyle: const TextStyle(color: AppColors.textSecondary),
+          hintStyle: TextStyle(color: AppColors.textSecondary.withValues(alpha: 0.6)),
         ),
         sliderTheme: SliderThemeData(
           activeTrackColor: AppColors.medication,
@@ -103,13 +101,13 @@ class MyApp extends StatelessWidget {
         chipTheme: ChipThemeData(
           backgroundColor: AppColors.surfaceCard,
           selectedColor: AppColors.medication,
-          labelStyle: GoogleFonts.nunito(fontSize: 14, color: Colors.white),
+          labelStyle: GoogleFonts.nunito(fontSize: 14, color: AppColors.textPrimary),
           secondaryLabelStyle: GoogleFonts.nunito(
             fontSize: 14,
-            color: AppColors.background,
+            color: Colors.white,
             fontWeight: FontWeight.w600,
           ),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
+          side: const BorderSide(color: AppColors.border),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
@@ -119,19 +117,19 @@ class MyApp extends StatelessWidget {
           elevation: 0,
           scrolledUnderElevation: 0,
           titleTextStyle: GoogleFonts.nunito(
-            color: Colors.white,
+            color: AppColors.textPrimary,
             fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: AppColors.textPrimary),
         ),
-        bottomNavigationBarTheme: BottomNavigationBarThemeData(
-          backgroundColor: AppColors.surface,
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          backgroundColor: AppColors.surfaceCard,
           selectedItemColor: AppColors.medication,
-          unselectedItemColor: Colors.white.withValues(alpha: 0.4),
+          unselectedItemColor: AppColors.textSecondary,
         ),
         bottomAppBarTheme: const BottomAppBarThemeData(
-          color: AppColors.surface,
+          color: AppColors.surfaceCard,
         ),
         dialogTheme: DialogThemeData(
           backgroundColor: AppColors.surfaceCard,
@@ -139,10 +137,10 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        dividerColor: Colors.white.withValues(alpha: 0.08),
-        iconTheme: IconThemeData(color: Colors.white.withValues(alpha: 0.7)),
+        dividerColor: AppColors.border,
+        iconTheme: const IconThemeData(color: AppColors.textSecondary),
       ),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: const AppRoot(),
       debugShowCheckedModeBanner: false,
     );

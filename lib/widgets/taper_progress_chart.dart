@@ -114,7 +114,7 @@ class TaperProgressChart extends StatelessWidget {
                   minY: 0,
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
-                      getTooltipColor: (touchedSpot) => Colors.black87,
+                      getTooltipColor: (touchedSpot) => AppColors.textPrimary,
                       getTooltipItems: (touchedBarSpots) {
                         return touchedBarSpots.map((barSpot) {
                           final date = _getDateFromX(barSpot.x);

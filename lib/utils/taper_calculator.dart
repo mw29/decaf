@@ -13,33 +13,37 @@ class TaperCalculator {
       return 0.0;
     }
     
+    double target;
     switch (plan.preset) {
       case TaperPreset.linear:
-        return _calculateLinearTarget(plan, daysSinceStart);
+        target = _calculateLinearTarget(plan, daysSinceStart);
       case TaperPreset.stepDown:
-        return _calculateStepDownTarget(plan, daysSinceStart);
+        target = _calculateStepDownTarget(plan, daysSinceStart);
       case TaperPreset.custom:
-        return _calculateCustomTarget(plan, daysSinceStart);
+        target = _calculateCustomTarget(plan, daysSinceStart);
     }
+    return target.roundToDouble();
   }
 
   static double _calculateLinearTarget(TaperPlan plan, int daysSinceStart) {
-    final totalReduction = plan.startingAmount;
+    final targetAmount = (plan.presetConfig['targetAmount'] as num?)?.toDouble() ?? 0.0;
+    final totalReduction = plan.startingAmount - targetAmount;
     final dailyReduction = totalReduction / (plan.totalDays - 1);
     final target = plan.startingAmount - (dailyReduction * daysSinceStart);
-    return target.clamp(0.0, plan.startingAmount);
+    return target.clamp(targetAmount, plan.startingAmount);
   }
 
   static double _calculateStepDownTarget(TaperPlan plan, int daysSinceStart) {
+    final targetAmount = (plan.presetConfig['targetAmount'] as num?)?.toDouble() ?? 0.0;
     // Support both new and old configuration keys for compatibility
-    final stepReduction = plan.presetConfig['stepReduction'] as double? ?? 
+    final stepReduction = plan.presetConfig['stepReduction'] as double? ??
                          plan.presetConfig['weeklyReduction'] as double? ??
                          (plan.startingAmount / (plan.totalDays / 7).ceil());
     final stepIntervalDays = plan.presetConfig['stepIntervalDays'] as int? ?? 7;
-    
+
     final stepsSinceStart = (daysSinceStart / stepIntervalDays).floor();
     final target = plan.startingAmount - (stepReduction * stepsSinceStart);
-    return target.clamp(0.0, plan.startingAmount);
+    return target.clamp(targetAmount, plan.startingAmount);
   }
 
   static double _calculateCustomTarget(TaperPlan plan, int daysSinceStart) {
@@ -125,15 +129,17 @@ class TaperCalculator {
     required DateTime startDate,
     required int durationWeeks,
     required double startingAmount,
+    double targetAmount = 0,
   }) {
     final endDate = startDate.add(Duration(days: (durationWeeks * 7) - 1));
-    
+
     return TaperPlan(
       id: id,
       startDate: startDate,
       endDate: endDate,
       startingAmount: startingAmount,
       preset: TaperPreset.linear,
+      presetConfig: {'targetAmount': targetAmount},
       createdAt: DateTime.now(),
     );
   }
@@ -144,13 +150,18 @@ class TaperCalculator {
     required int durationWeeks,
     required double startingAmount,
     required double stepReduction,
+    double targetAmount = 0,
     int stepIntervalDays = 7,
   }) {
-    // Calculate actual number of steps needed
-    final stepsNeeded = (startingAmount / stepReduction).ceil();
+    // Guard against zero step reduction
+    if (stepReduction <= 0) {
+      throw ArgumentError('stepReduction must be greater than 0');
+    }
+    // Calculate actual steps needed to reach target
+    final stepsNeeded = ((startingAmount - targetAmount) / stepReduction).ceil();
     // End date is the day after the last step period
     final endDate = startDate.add(Duration(days: (stepsNeeded * stepIntervalDays)));
-    
+
     return TaperPlan(
       id: id,
       startDate: startDate,
@@ -160,6 +171,7 @@ class TaperCalculator {
       presetConfig: {
         'stepReduction': stepReduction,
         'stepIntervalDays': stepIntervalDays,
+        'targetAmount': targetAmount,
       },
       createdAt: DateTime.now(),
     );

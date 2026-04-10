@@ -148,8 +148,6 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
     final isToday = _isSameDay(date, DateTime.now());
     final isSelected = _selectedDate != null && _isSameDay(date, _selectedDate!);
     final isPlanActive = _isDateInPlan(date);
-    final isLastDay = _isSameDay(date, widget.plan.endDate);
-    
     final dayKey = DateTime(date.year, date.month, date.day);
     final targetAmount = schedule[dayKey] ?? 0.0;
     final actualAmount = _getActualCaffeineForDay(events, date);
@@ -172,39 +170,33 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (isLastDay) ...[
-              const Text(
-                '🎉',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 2),
-            ],
             Text(
               date.day.toString(),
               style: TextStyle(
                 fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                color: isCurrentMonth 
+                color: isCurrentMonth
                     ? (isSelected || isToday ? Colors.white : _getDayTextColor(adherenceStatus))
                     : Colors.grey,
-                fontSize: 14,
+                fontSize: 13,
+                height: 1.1,
               ),
             ),
-            if (isPlanActive && targetAmount > 0) ...[
-              const SizedBox(height: 2),
+            if (isPlanActive && targetAmount > 0)
               Text(
                 formatMg(targetAmount),
                 style: TextStyle(
-                  fontSize: 10,
-                  color: isCurrentMonth 
+                  fontSize: 9,
+                  height: 1.2,
+                  color: isCurrentMonth
                       ? (isSelected || isToday ? Colors.white70 : Colors.grey[600])
                       : Colors.grey,
                 ),
               ),
-            ],
-            if (actualAmount > 0) ...[
-              const SizedBox(height: 1),
+            if (actualAmount > 0)
               Container(
+                margin: const EdgeInsets.only(top: 1),
                 width: 4,
                 height: 4,
                 decoration: BoxDecoration(
@@ -212,7 +204,6 @@ class _CalendarViewState extends ConsumerState<CalendarView> {
                   shape: BoxShape.circle,
                 ),
               ),
-            ],
           ],
         ),
       ),
