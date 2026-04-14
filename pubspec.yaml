@@ -1,7 +1,7 @@
 name: tapermind
 description: "Taper ADHD medications gradually."
 publish_to: 'none'
-version: 2025.10.04+18
+version: 2025.14.04+19
 
 environment:
   sdk: ^3.7.2
